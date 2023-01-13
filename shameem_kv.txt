@@ -1,0 +1,84 @@
+import os
+import csv 
+import datetime
+from  datetime import datetime
+import re
+
+t=datetime.now()
+today=str(t.strftime("%Y%m%d"))
+todaydate=datetime.now()
+d=str(todaydate)
+o=d.split(" ")
+today1=str(t.strftime("%d/%m/%Y"))
+
+datetime_object1 = datetime.strptime(today1, '%d/%m/%Y').date()
+
+
+tdate=o[0]
+print(tdate," is todays date")
+
+ 
+
+#CREATING AN EMPTY FILE IN CSV 
+fname="HUAWEI_5G_CHMEAS_PUSCH_{}.csv".format(today)
+print(fname," - file created!")
+
+ 
+
+head = ['Name','Age','Dob']
+
+
+with open(fname, 'r') as read_obj:
+  
+    # Return a reader object which will
+    # iterate over lines in the given csvfile
+    csv_reader = csv.reader(read_obj)
+  
+    # convert string to list
+    data_list = list(csv_reader)
+    
+  
+
+
+
+#data_list=[]
+clean_list = []    
+error_list = []
+regex_string = re.compile('[0-9@_!#$%^&*()<>?/\|}{~:]')
+regex_int = re.compile('[a-zA-Z@_!#$%^&*()<>?/\|}{~:]')
+
+
+
+
+#CHECKING WHETHER THE FILE IS IN CSV OR NOT
+if fname.endswith('.csv'):
+    #CHECKING WHETHER FILE IS EMPTY OR NOT
+    if os.path.getsize(fname) ==0:
+        print("it is an empty file ")
+    else:
+        file_type='<class \'datetime.date\'>'
+        #ITERATING THROUGH EACH ELEMENTS IN THE LIST
+        for x in data_list:
+            '''CHECKING WHETHER :
+            >>NAME IS STRING
+            >>AGE IS INTEGER, LENGTH OF AGE >3 AND AGE >0
+            >>CHECHING WHETHER DOB IS IN DATE TYPE AND DATE <CURRENT DATE 
+            '''
+
+            datetime_object = datetime.strptime(x[2], '%d/%m/%Y').date()
+           
+            
+            if regex_string.search(x[0]) == None and regex_int.search(x[1]) == None and len(str(x[1]))<3 and int(x[1])>0 and str(type(datetime_object))== file_type and datetime_object<datetime_object1:
+                
+                if x not in clean_list:
+                    clean_list.append(x)
+                    with open('clean_data.csv','a') as clean_data:
+
+                        c_data = csv.writer(clean_data)
+                        c_data.writerow(x) 
+            else:
+                error_list.append(x)
+                with open('error_data.csv','a') as error_data:
+
+                    e_data = csv.writer(error_data)
+                    e_data.writerow(x)  
